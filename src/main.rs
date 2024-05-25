@@ -4,6 +4,12 @@ const IMG_WIDTH: u32 = 1024;
 const IMG_HEIGHT: u32 = 512;
 const IMG_RES: u32 = IMG_WIDTH * IMG_HEIGHT;
 
+struct Vec3 {
+    x: f64,
+    y: f64,
+    z: f64
+}
+
 fn main() {
     print_image_header();
     
