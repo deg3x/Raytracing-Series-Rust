@@ -2,6 +2,8 @@ use indicatif::{ProgressBar, ProgressStyle};
 
 pub mod vector;
 
+use vector::*;
+
 const IMG_WIDTH: u32 = 1024;
 const IMG_HEIGHT: u32 = 512;
 const IMG_RES: u32 = IMG_WIDTH * IMG_HEIGHT;
