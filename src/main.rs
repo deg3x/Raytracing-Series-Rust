@@ -10,6 +10,22 @@ struct Vec3 {
     z: f64
 }
 
+impl Vec3 {
+    fn new(x: f64, y: f64, z: f64) -> Vec3 {
+        Vec3 {x: x, y: y, z: z}
+    }
+    
+    fn len_sqr(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+    
+    fn len(&self) -> f64 {
+        let squared = self.len_sqr();
+        
+        squared.sqrt()
+    }
+}
+
 fn main() {
     print_image_header();
     
