@@ -1,8 +1,10 @@
 use indicatif::{ProgressBar, ProgressStyle};
 
 pub mod vector;
+pub mod ray;
 
 use vector::*;
+use ray::*;
 
 const IMG_WIDTH: u32 = 1024;
 const IMG_HEIGHT: u32 = 512;
