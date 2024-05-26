@@ -6,11 +6,25 @@ pub mod ray;
 use vector::*;
 use ray::*;
 
+const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMG_WIDTH: u32 = 1024;
-const IMG_HEIGHT: u32 = 512;
+const IMG_HEIGHT: u32 = (IMG_WIDTH as f64 / ASPECT_RATIO) as u32;
 const IMG_RES: u32 = IMG_WIDTH * IMG_HEIGHT;
 
+const FOCAL_LEN: f64 = 1.0;
+const CAMERA_CENTER: Vec3 = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+const VIEW_HEIGHT: f64 = 2.0;
+const VIEW_WIDTH: f64 = VIEW_HEIGHT * (IMG_WIDTH as f64 / IMG_HEIGHT as f64);
+const VIEW_U: Vec3 = Vec3 { x: VIEW_WIDTH, y: 0.0, z: 0.0 };
+const VIEW_V: Vec3 = Vec3 { x: 0.0, y: -VIEW_HEIGHT, z: 0.0 };
+const PX_DELTA_U: f64 = VIEW_U.x / IMG_WIDTH as f64;
+const PX_DELTA_V: f64 = VIEW_V.y / IMG_HEIGHT as f64;
+// const VIEW_PX_UL: Vec3 = CAMERA_CENTER - Vec3 { x: 0.0, y: 0.0, z: FOCAL_LEN } - VIEW_U * 0.5 - VIEW_V * 0.5;
+// const PX00: Vec3 = VIEW_PX_UL + 0.5 * (PX_DELTA_U + PX_DELTA_V);
+
 fn main() {
+    assert!(IMG_HEIGHT > 1);
+    
     print_image_header();
     
     let mult_w: f32 = (256 as f32 / IMG_WIDTH as f32) as f32;
