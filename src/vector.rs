@@ -65,11 +65,11 @@ impl Mul<f64> for Vec3 {
     }
 }
 
-pub fn dot(a: Vec3, b: Vec3) -> f64 {
+pub fn dot(a: &Vec3, b: &Vec3) -> f64 {
     a.x * b.x + a.y * b.y + a.z * b.z
 }
 
-pub fn cross(a: Vec3, b: Vec3) -> Vec3 {
+pub fn cross(a: &Vec3, b: &Vec3) -> Vec3 {
     Vec3 { 
         x: a.y * b.z - b.y * a.z,
         y: a.x * b.z - b.x * a.z,
