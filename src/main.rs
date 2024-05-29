@@ -23,6 +23,9 @@ const PX_DELTA_V: f64 = VIEW_V.y / IMG_HEIGHT as f64;
 // const PX00: Vec3 = VIEW_PX_UL + 0.5 * (PX_DELTA_U + PX_DELTA_V);
 
 fn main() {
+    let VIEW_PX_UL: Vec3 = CAMERA_CENTER - Vec3 { x: 0.0, y: 0.0, z: FOCAL_LEN } - VIEW_U * 0.5 - VIEW_V * 0.5;
+    let PX00: Vec3 = VIEW_PX_UL + 0.5 * (PX_DELTA_U + PX_DELTA_V);
+    
     assert!(IMG_HEIGHT > 1);
     
     print_image_header();

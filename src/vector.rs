@@ -41,6 +41,18 @@ impl Add for Vec3 {
     }
 }
 
+impl Add<f64> for Vec3 {
+    type Output = Self;
+
+    fn add(self, rhs: f64) -> Self {
+        Self {
+            x: self.x + rhs,
+            y: self.y + rhs,
+            z: self.z + rhs
+        }
+    }
+}
+
 impl Sub for Vec3 {
     type Output = Self;
     
