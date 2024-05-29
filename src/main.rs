@@ -57,11 +57,14 @@ fn main() {
 }
 
 fn ray_color(ray: &Ray) -> Color {
-    Color {
-        r: 0,
-        g: 0,
-        b: 0
-    }
+    let ray_dir_norm = ray.direction.normalized();
+    let interp = (ray_dir_norm.y + 1.0) * 0.5;
+    let color_white = Color01 {r: 1.0, g: 1.0, b: 1.0};
+    let color_blue = Color01 {r: 0.5, g: 0.7, b: 1.0};
+    
+    let color_01 = (1.0 - interp) * color_white + interp * color_blue;
+    
+    Color::from(color_01)
 }
 
 fn print_image_header() {

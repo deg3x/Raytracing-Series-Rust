@@ -1,4 +1,5 @@
-use std::convert::{From};
+use std::convert::From;
+use std::ops::{Add, Mul};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
@@ -34,6 +35,42 @@ impl From<Color> for Color01 {
             r: value.r as f64 * inv_mult,
             g: value.g as f64 * inv_mult,
             b: value.b as f64 * inv_mult
+        }
+    }
+}
+
+impl Add for Color01 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            r: self.r + rhs.r,
+            g: self.g + rhs.g,
+            b: self.b + rhs.b,
+        }
+    }
+}
+
+impl Mul<f64> for Color01 {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            r: self.r * rhs,
+            g: self.g * rhs,
+            b: self.b * rhs
+        }
+    }
+}
+
+impl Mul<Color01> for f64 {
+    type Output = Color01;
+
+    fn mul(self, rhs: Color01) -> Self::Output {
+        Color01 {
+            r: self * rhs.r,
+            g: self * rhs.g,
+            b: self * rhs.b
         }
     }
 }
