@@ -1,11 +1,13 @@
 use std::convert::{From};
 
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
     pub b: u8
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color01 {
     pub r: f64,
     pub g: f64,
@@ -34,4 +36,14 @@ impl From<Color> for Color01 {
             b: value.b as f64 * inv_mult
         }
     }
+}
+
+pub fn print_color(color: Color) {
+    println!("{} {} {}", color.r, color.g, color.b);
+}
+
+pub fn print_color_01(color: Color01) {
+    let color_byte = Color::from(color);
+    
+    print_color(color_byte);
 }

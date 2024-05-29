@@ -44,12 +44,11 @@ fn main() {
         for j in 0..IMG_WIDTH {
             let px_center = PX00 + j as f64 * PX_DELTA_U + i as f64 * PX_DELTA_V;
             let ray_dir = CAMERA_CENTER - px_center;
-            
             let ray: Ray = Ray::new(CAMERA_CENTER, ray_dir);
-            
             let color = ray_color(&ray);
             
-            println!("{} {} {}", color.x, color.y, color.z);
+            print_color(color);
+            
             progress_bar.inc(1);
         }
     }
@@ -57,8 +56,12 @@ fn main() {
     progress_bar.finish();
 }
 
-fn ray_color(ray: &Ray) -> Vec3 {
-    Vec3 { x: 0.0, y: 0.0, z: 0.0}
+fn ray_color(ray: &Ray) -> Color {
+    Color {
+        r: 0,
+        g: 0,
+        b: 0
+    }
 }
 
 fn print_image_header() {
