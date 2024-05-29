@@ -1,48 +1,30 @@
 use indicatif::{ProgressBar, ProgressStyle};
 
 pub mod vector;
+pub mod camera;
 pub mod color;
 pub mod ray;
 
+use camera::*;
 use vector::*;
 use color::*;
 use ray::*;
 
-const ASPECT_RATIO: f64 = 16.0 / 9.0;
-const IMG_WIDTH: u32 = 1024;
-const IMG_HEIGHT: u32 = (IMG_WIDTH as f64 / ASPECT_RATIO) as u32;
-const IMG_RES: u32 = IMG_WIDTH * IMG_HEIGHT;
-
-const FOCAL_LEN: f64 = 1.0;
-const CAMERA_CENTER: Vec3 = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
-const VIEW_HEIGHT: f64 = 2.0;
-const VIEW_WIDTH: f64 = VIEW_HEIGHT * (IMG_WIDTH as f64 / IMG_HEIGHT as f64);
-const VIEW_U: Vec3 = Vec3 { x: VIEW_WIDTH, y: 0.0, z: 0.0 };
-const VIEW_V: Vec3 = Vec3 { x: 0.0, y: -VIEW_HEIGHT, z: 0.0 };
-
 fn main() {
-    let PX_DELTA_U: Vec3 = VIEW_U * (1.0 / IMG_WIDTH as f64);
-    let PX_DELTA_V: Vec3 = VIEW_V * (1.0 / IMG_HEIGHT as f64);
-    let VIEW_PX_UL: Vec3 = CAMERA_CENTER - Vec3 { x: 0.0, y: 0.0, z: FOCAL_LEN } - VIEW_U * 0.5 - VIEW_V * 0.5;
-    let PX00: Vec3 = VIEW_PX_UL + (PX_DELTA_U + PX_DELTA_V) * 0.5;
+    let camera: Camera = Camera::default();
     
-    assert!(IMG_HEIGHT > 1);
+    print_image_header(camera.frame_width, camera.frame_height);
     
-    print_image_header();
-    
-    let mult_w: f32 = (256 as f32 / IMG_WIDTH as f32) as f32;
-    let mult_h: f32 = (256 as f32 / IMG_HEIGHT as f32) as f32;
-    
-    let progress_bar = ProgressBar::new(IMG_RES as u64);
+    let progress_bar = ProgressBar::new(camera.frame_res as u64);
     progress_bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] |{bar:40.cyan/blue}| {percent}%")
         .unwrap()
         .progress_chars("=> "));
     
-    for i in 0..IMG_HEIGHT {
-        for j in 0..IMG_WIDTH {
-            let px_center = PX00 + PX_DELTA_U * j as f64 + PX_DELTA_V * i as f64;
-            let ray_dir = px_center - CAMERA_CENTER;
-            let ray: Ray = Ray::new(CAMERA_CENTER, ray_dir);
+    for i in 0..camera.frame_height {
+        for j in 0..camera.frame_width {
+            let px_center = camera.pixel_zero + camera.pixel_delta_u * j as f64 + camera.pixel_delta_v * i as f64;
+            let ray_dir = px_center - camera.position;
+            let ray: Ray = Ray::new(camera.position, ray_dir);
             let color = ray_color(&ray);
             
             print_color(color);
@@ -65,8 +47,8 @@ fn ray_color(ray: &Ray) -> Color {
     Color::from(color_01)
 }
 
-fn print_image_header() {
+fn print_image_header(width: u32, height: u32) {
     println!("P3");
-    println!("{IMG_WIDTH} {IMG_HEIGHT}");
+    println!("{} {}", width, height);
     println!("255");
 }
