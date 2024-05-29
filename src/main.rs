@@ -1,9 +1,11 @@
 use indicatif::{ProgressBar, ProgressStyle};
 
 pub mod vector;
+pub mod color;
 pub mod ray;
 
 use vector::*;
+use color::*;
 use ray::*;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
