@@ -19,14 +19,12 @@ const VIEW_HEIGHT: f64 = 2.0;
 const VIEW_WIDTH: f64 = VIEW_HEIGHT * (IMG_WIDTH as f64 / IMG_HEIGHT as f64);
 const VIEW_U: Vec3 = Vec3 { x: VIEW_WIDTH, y: 0.0, z: 0.0 };
 const VIEW_V: Vec3 = Vec3 { x: 0.0, y: -VIEW_HEIGHT, z: 0.0 };
-const PX_DELTA_U: f64 = VIEW_U.x / IMG_WIDTH as f64;
-const PX_DELTA_V: f64 = VIEW_V.y / IMG_HEIGHT as f64;
-// const VIEW_PX_UL: Vec3 = CAMERA_CENTER - Vec3 { x: 0.0, y: 0.0, z: FOCAL_LEN } - VIEW_U * 0.5 - VIEW_V * 0.5;
-// const PX00: Vec3 = VIEW_PX_UL + 0.5 * (PX_DELTA_U + PX_DELTA_V);
 
 fn main() {
+    let PX_DELTA_U: Vec3 = VIEW_U * (1.0 / IMG_WIDTH as f64);
+    let PX_DELTA_V: Vec3 = VIEW_V * (1.0 / IMG_HEIGHT as f64);
     let VIEW_PX_UL: Vec3 = CAMERA_CENTER - Vec3 { x: 0.0, y: 0.0, z: FOCAL_LEN } - VIEW_U * 0.5 - VIEW_V * 0.5;
-    let PX00: Vec3 = VIEW_PX_UL + 0.5 * (PX_DELTA_U + PX_DELTA_V);
+    let PX00: Vec3 = VIEW_PX_UL + (PX_DELTA_U + PX_DELTA_V) * 0.5;
     
     assert!(IMG_HEIGHT > 1);
     
@@ -42,8 +40,8 @@ fn main() {
     
     for i in 0..IMG_HEIGHT {
         for j in 0..IMG_WIDTH {
-            let px_center = PX00 + j as f64 * PX_DELTA_U + i as f64 * PX_DELTA_V;
-            let ray_dir = CAMERA_CENTER - px_center;
+            let px_center = PX00 + PX_DELTA_U * j as f64 + PX_DELTA_V * i as f64;
+            let ray_dir = px_center - CAMERA_CENTER;
             let ray: Ray = Ray::new(CAMERA_CENTER, ray_dir);
             let color = ray_color(&ray);
             
