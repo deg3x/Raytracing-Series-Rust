@@ -37,6 +37,10 @@ fn main() {
 }
 
 fn ray_color(ray: &Ray) -> Color {
+    if (ray_sphere_intersection(&Vec3::new(0.0, 0.0, -1.0), 0.5, ray)) {
+        return Color {r: 200, g: 0, b: 0};
+    }
+    
     let ray_dir_norm = ray.direction.normalized();
     let interp = (ray_dir_norm.y + 1.0) * 0.5;
     let color_white = Color01 {r: 1.0, g: 1.0, b: 1.0};
@@ -45,6 +49,18 @@ fn ray_color(ray: &Ray) -> Color {
     let color_01 = (1.0 - interp) * color_white + interp * color_blue;
     
     Color::from(color_01)
+}
+
+fn ray_sphere_intersection(sphere_center: &Vec3, sphere_radius: f64, ray: &Ray) -> bool {
+    let sphere_to_ray = ray.origin - *sphere_center;
+    
+    let a = ray.direction.len_sqr();
+    let b = -2.0 * vector::dot(&ray.direction, &sphere_to_ray);
+    let c = sphere_to_ray.len_sqr() - sphere_radius * sphere_radius;
+    
+    let discriminant = b * b - 4.0 * a * c;
+    
+    discriminant >= 0.0
 }
 
 fn print_image_header(width: u32, height: u32) {
