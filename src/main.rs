@@ -61,10 +61,10 @@ fn ray_sphere_intersection(sphere_center: &Vec3, sphere_radius: f64, ray: &Ray) 
     let sphere_to_ray = ray.origin - *sphere_center;
     
     let a = ray.direction.len_sqr();
-    let b = 2.0 * vector::dot(&ray.direction, &sphere_to_ray);
+    let b = vector::dot(&ray.direction, &sphere_to_ray);
     let c = sphere_to_ray.len_sqr() - sphere_radius * sphere_radius;
     
-    let discriminant = b * b - 4.0 * a * c;
+    let discriminant = b * b - a * c;
     
     if discriminant < 0.0 {
         return -1.0;
@@ -72,7 +72,7 @@ fn ray_sphere_intersection(sphere_center: &Vec3, sphere_radius: f64, ray: &Ray) 
     
     let disc_sqrt = f64::sqrt(discriminant);
     
-    (-b - disc_sqrt) / (2.0 * a)
+    (-b - disc_sqrt) / a
 }
 
 fn print_image_header(width: u32, height: u32) {
