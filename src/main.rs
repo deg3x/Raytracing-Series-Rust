@@ -37,8 +37,14 @@ fn main() {
 }
 
 fn ray_color(ray: &Ray) -> Color {
-    if (ray_sphere_intersection(&Vec3::new(0.0, 0.0, -1.0), 0.5, ray)) {
-        return Color {r: 200, g: 0, b: 0};
+    let sphere_c = Vec3::new(0.0, 0.0, -1.0);
+    let sphere_r = 0.5;
+    let intersect = ray_sphere_intersection(&sphere_c, sphere_r, ray);
+    if intersect >= 0.0 {
+        let hit = ray.at(intersect);
+        let normal = (hit - sphere_c).normalized();
+        
+        return Color::from(Color01 {r: normal.x + 1.0, g: normal.y + 1.0, b: normal.z + 1.0} * 0.5);
     }
     
     let ray_dir_norm = ray.direction.normalized();
@@ -51,16 +57,22 @@ fn ray_color(ray: &Ray) -> Color {
     Color::from(color_01)
 }
 
-fn ray_sphere_intersection(sphere_center: &Vec3, sphere_radius: f64, ray: &Ray) -> bool {
+fn ray_sphere_intersection(sphere_center: &Vec3, sphere_radius: f64, ray: &Ray) -> f64 {
     let sphere_to_ray = ray.origin - *sphere_center;
     
     let a = ray.direction.len_sqr();
-    let b = -2.0 * vector::dot(&ray.direction, &sphere_to_ray);
+    let b = 2.0 * vector::dot(&ray.direction, &sphere_to_ray);
     let c = sphere_to_ray.len_sqr() - sphere_radius * sphere_radius;
     
     let discriminant = b * b - 4.0 * a * c;
     
-    discriminant >= 0.0
+    if discriminant < 0.0 {
+        return -1.0;
+    }
+    
+    let disc_sqrt = f64::sqrt(discriminant);
+    
+    (-b - disc_sqrt) / (2.0 * a)
 }
 
 fn print_image_header(width: u32, height: u32) {
