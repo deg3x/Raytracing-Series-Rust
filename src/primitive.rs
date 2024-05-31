@@ -4,7 +4,20 @@ use crate::ray::*;
 pub struct RayHitData {
     pub point: Vec3,
     pub normal: Vec3,
-    pub ray_t: f64
+    pub ray_t: f64,
+    pub front_face: bool
+}
+
+impl RayHitData {
+    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: &Vec3) {
+        self.front_face = dot(&ray.direction, outward_normal) > 0.0;
+        if self.front_face {
+            self.normal = *outward_normal * -1.0;
+        }
+        else {
+            self.normal = *outward_normal;
+        }
+    }
 }
 
 pub struct RayHitResult {
@@ -19,7 +32,8 @@ impl Default for RayHitResult {
             data: RayHitData {
                 point: Vec3 {x: 0.0, y: 0.0, z: 0.0},
                 normal: Vec3 {x: 0.0, y: 0.0, z: 0.0},
-                ray_t: -1.0
+                ray_t: -1.0,
+                front_face: false
             }
         }
     }
@@ -65,7 +79,9 @@ impl Hittable for Sphere {
         result.is_hit = true;
         result.data.ray_t = t;
         result.data.point = ray.at(result.data.ray_t);
-        result.data.normal = (result.data.point - self.center) * (1.0 / self.radius);
+        
+        let normal = (result.data.point - self.center) * (1.0 / self.radius);
+        result.data.set_face_normal(ray, &normal);
         
         result
     }
