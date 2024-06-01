@@ -17,7 +17,9 @@ use rt_util::*;
 fn main() {
     let camera: Camera = Camera::default();
     
-    let world: HittableList = HittableList::new();
+    let mut world: HittableList = HittableList::new();
+    world.add(Box::new(Sphere {center: Vec3::new(0.0, 0.0, -1.0), radius: 0.5}));
+    world.add(Box::new(Sphere {center: Vec3::new(0.0, -100.5, -1.0), radius: 100.0}));
     
     print_image_header(camera.frame_width, camera.frame_height);
     
@@ -31,7 +33,7 @@ fn main() {
             let px_center = camera.pixel_zero + camera.pixel_delta_u * j as f64 + camera.pixel_delta_v * i as f64;
             let ray_dir = px_center - camera.position;
             let ray: Ray = Ray::new(camera.position, ray_dir);
-            let color = ray_color(&ray);
+            let color = ray_color(&ray, &world);
             
             print_color(color);
             
@@ -42,10 +44,8 @@ fn main() {
     progress_bar.finish();
 }
 
-fn ray_color(ray: &Ray) -> Color {
-    let sphere = Sphere {center: Vec3::new(0.0, 0.0, -1.0), radius: 0.5};
-    
-    let hit_result = sphere.hit(ray, 0.0, 1000.0);
+fn ray_color(ray: &Ray, world: &HittableList) -> Color {
+    let hit_result = world.hit(ray, 0.0, rt_util::INFINITY);
     if hit_result.is_hit {
         return Color::from(Color01 {r: hit_result.data.normal.x + 1.0, g: hit_result.data.normal.y + 1.0, b: hit_result.data.normal.z + 1.0} * 0.5);
     }
