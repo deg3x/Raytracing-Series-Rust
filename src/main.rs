@@ -5,15 +5,19 @@ pub mod vector;
 pub mod camera;
 pub mod color;
 pub mod ray;
+pub mod rt_util;
 
 use primitive::*;
 use camera::*;
 use vector::*;
 use color::*;
 use ray::*;
+use rt_util::*;
 
 fn main() {
     let camera: Camera = Camera::default();
+    
+    let world: HittableList = HittableList::new();
     
     print_image_header(camera.frame_width, camera.frame_height);
     
