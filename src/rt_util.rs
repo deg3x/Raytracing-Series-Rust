@@ -8,3 +8,9 @@ pub fn deg_to_rad(deg: f64) -> f64 {
 pub fn rad_to_deg(rad: f64) -> f64 {
     rad * 180.0 / PI
 }
+
+pub fn print_image_header(width: u32, height: u32) {
+    println!("P3");
+    println!("{} {}", width, height);
+    println!("255");
+}
