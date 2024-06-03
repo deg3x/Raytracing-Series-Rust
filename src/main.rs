@@ -1,11 +1,11 @@
 use indicatif::{ProgressBar, ProgressStyle};
 
-pub mod primitive;
-pub mod vector;
-pub mod camera;
-pub mod color;
-pub mod ray;
-pub mod rt_util;
+mod primitive;
+mod vector;
+mod camera;
+mod color;
+mod ray;
+mod rt_util;
 
 use primitive::*;
 use camera::*;
