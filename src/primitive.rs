@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use crate::vector::*;
 use crate::ray::*;
 
@@ -40,7 +42,7 @@ impl Default for RayHitResult {
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> RayHitResult;
+    fn hit(&self, ray: &Ray, t_range: Range<f64>) -> RayHitResult;
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -50,7 +52,7 @@ pub struct Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> RayHitResult {
+    fn hit(&self, ray: &Ray, t_range: Range<f64>) -> RayHitResult {
         let mut result = RayHitResult::default();
         
         let sphere_to_ray = ray.origin - self.center;
@@ -68,10 +70,10 @@ impl Hittable for Sphere {
         let disc_sqrt = f64::sqrt(discriminant);
         
         let mut t = (-b - disc_sqrt) / a;
-        if t < t_min || t > t_max {
+        if !t_range.contains(&t) {
             t = (-b + disc_sqrt) / a;
             
-            if t < t_min || t > t_max {
+            if !t_range.contains(&t) {
                 return result;
             }
         }
@@ -106,12 +108,12 @@ impl HittableList {
         self.objects.clear();
     }
     
-    pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> RayHitResult {
+    pub fn hit(&self, ray: &Ray, t_range: Range<f64>) -> RayHitResult {
         let mut hit: RayHitResult = RayHitResult::default();
-        let mut closest_t = t_max;
+        let mut closest_t: f64 = t_range.end;
         
         for object in self.objects.iter() {
-            let hit_result = object.hit(ray, t_min, closest_t);
+            let hit_result = object.hit(ray, t_range.start..closest_t);
             if hit_result.is_hit {
                 closest_t = hit_result.data.ray_t;
                 hit = hit_result;

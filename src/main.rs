@@ -12,7 +12,6 @@ use camera::*;
 use vector::*;
 use color::*;
 use ray::*;
-use rt_util::*;
 
 fn main() {
     let camera: Camera = Camera::default();
@@ -45,7 +44,7 @@ fn main() {
 }
 
 fn ray_color(ray: &Ray, world: &HittableList) -> Color {
-    let hit_result = world.hit(ray, 0.0, rt_util::INFINITY);
+    let hit_result = world.hit(ray, 0.0..rt_util::INFINITY);
     if hit_result.is_hit {
         return Color::from(Color01 {r: hit_result.data.normal.x + 1.0, g: hit_result.data.normal.y + 1.0, b: hit_result.data.normal.z + 1.0} * 0.5);
     }
