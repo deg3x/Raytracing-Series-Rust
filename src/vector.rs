@@ -1,4 +1,6 @@
-use std::ops::{ Add, Sub, Mul };
+use std::ops::{ Add, Mul, Range, Sub };
+
+use rand::{random, Rng};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
@@ -26,6 +28,16 @@ impl Vec3 {
         let inv_len = 1f64 / self.len();
         
         Vec3 {x: self.x * inv_len, y: self.y * inv_len, z: self.z * inv_len}
+    }
+    
+    pub fn random() -> Vec3 {
+        Vec3::new(random(), random(), random())
+    }
+    
+    pub fn random_range(range: Range<f64>) -> Vec3 {
+        let mut rng = rand::thread_rng();
+        
+        Vec3::new(rng.gen_range(range.clone()), rng.gen_range(range.clone()), rng.gen_range(range.clone()))
     }
 }
 
