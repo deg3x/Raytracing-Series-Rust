@@ -10,28 +10,41 @@ use crate::rt_util;
 #[derive(Clone, Copy, Debug)]
 pub struct Camera {
     pub position: Vec3,
-    pub view_u: Vec3,
-    pub view_v: Vec3,
-    pub view_pixel_upper_left: Vec3,
-    pub pixel_zero: Vec3,
-    pub pixel_delta_u: Vec3,
-    pub pixel_delta_v: Vec3,
-    
-    pub pixel_samples_scale: f64,
     pub aspect_ratio: f64,
     pub focal_length: f64,
-    pub view_height: f64,
-    pub view_width: f64,
-    
     pub frame_width: u32,
-    pub frame_height: u32,
-    pub frame_res: u32,
-    
     pub samples_per_pixel: u16,
+    
+    pixel_zero: Vec3,
+    pixel_delta_u: Vec3,
+    pixel_delta_v: Vec3,
+    pixel_samples_scale: f64,
+    
+    frame_height: u32,
+    frame_res: u32,
 }
 
 impl Camera {
-    pub fn render(&self, world: &HittableList) {
+    pub fn initialize(&mut self) {
+        self.frame_height = (self.frame_width as f64 / self.aspect_ratio) as u32;
+        self.frame_res = self.frame_width * self.frame_height;
+        
+        let view_height = 2.0;
+        let view_width = view_height * (self.frame_width as f64 / self.frame_height as f64);
+        let view_u = Vec3::new(view_width, 0.0, 0.0);
+        let view_v = Vec3::new(0.0, -view_height, 0.0);
+        self.pixel_delta_u = view_u * (1.0 / self.frame_width as f64);
+        self.pixel_delta_v = view_v * (1.0 / self.frame_height as f64);
+        
+        let view_pixel_upper_left = self.position - Vec3::new(0.0, 0.0, self.focal_length) - (view_u + view_v) * 0.5;
+        self.pixel_zero = view_pixel_upper_left + (self.pixel_delta_u + self.pixel_delta_v) * 0.5;
+        
+        self.pixel_samples_scale = 1.0/self.samples_per_pixel as f64;
+    }
+    
+    pub fn render(&mut self, world: &HittableList) {
+        self.initialize();
+        
         rt_util::print_image_header(self.frame_width, self.frame_height);
         
         let progress_bar = ProgressBar::new(self.frame_res as u64);
@@ -106,17 +119,12 @@ impl Default for Camera {
         
         Camera {
             position,
-            view_u,
-            view_v,
-            view_pixel_upper_left,
             pixel_zero,
             pixel_delta_u,
             pixel_delta_v,
             pixel_samples_scale,
             aspect_ratio,
             focal_length,
-            view_height,
-            view_width,
             frame_width,
             frame_height,
             frame_res,
