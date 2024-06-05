@@ -1,4 +1,5 @@
 use indicatif::{ProgressBar, ProgressStyle};
+use rand::prelude::*;
 
 use crate::vector::Vec3;
 use crate::ray::Ray;
@@ -40,12 +41,14 @@ impl Camera {
         
         for i in 0..self.frame_height {
             for j in 0..self.frame_width {
-                let px_center = self.pixel_zero + self.pixel_delta_u * j as f64 + self.pixel_delta_v * i as f64;
-                let ray_dir = px_center - self.position;
-                let ray: Ray = Ray::new(self.position, ray_dir);
-                let color = Camera::ray_color(&ray, &world);
+                let mut color = Color01::default();
                 
-                print_color(color);
+                for _ in 0..self.samples_per_pixel {
+                    let ray: Ray = self.get_ray(i, j);
+                    color += Camera::ray_color(&ray, &world) * self.pixel_samples_scale;
+                }
+                
+                print_color_01(color);
                 
                 progress_bar.inc(1);
             }
@@ -54,10 +57,21 @@ impl Camera {
         progress_bar.finish();
     }
     
-    fn ray_color(ray: &Ray, world: &HittableList) -> Color {
+    fn get_ray(&self, i: u32, j: u32) -> Ray {
+        let mut rng = rand::thread_rng();
+        let offset = Vec3::new(rng.gen::<f64>() - 0.5, rng.gen::<f64>() - 0.5, 0.0);
+        let pixel_sample = self.pixel_zero + (self.pixel_delta_u * (j as f64 + offset.x)) + (self.pixel_delta_v * (i as f64 + offset.y));
+        
+        let ray_origin = self.position;
+        let ray_direction = pixel_sample - ray_origin;
+        
+        Ray::new(ray_origin, ray_direction)
+    }
+    
+    fn ray_color(ray: &Ray, world: &HittableList) -> Color01 {
         let hit_result = world.hit(ray, 0.0..rt_util::INFINITY);
         if hit_result.is_hit {
-            return Color::from(Color01 {r: hit_result.data.normal.x + 1.0, g: hit_result.data.normal.y + 1.0, b: hit_result.data.normal.z + 1.0} * 0.5);
+            return Color01 {r: (hit_result.data.normal.x + 1.0) * 0.5, g: (hit_result.data.normal.y + 1.0) * 0.5, b: (hit_result.data.normal.z + 1.0) * 0.5};
         }
         
         let ray_dir_norm = ray.direction.normalized();
@@ -67,7 +81,7 @@ impl Camera {
         
         let color_01 = (1.0 - interp) * color_white + interp * color_blue;
         
-        Color::from(color_01)
+        color_01
     }
 }
 

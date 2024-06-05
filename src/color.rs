@@ -1,5 +1,5 @@
 use std::convert::From;
-use std::ops::{Add, Mul};
+use std::ops::{Add, Mul, AddAssign};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
@@ -39,6 +39,16 @@ impl From<Color> for Color01 {
     }
 }
 
+impl Default for Color01 {
+    fn default() -> Self {
+        Self {
+            r: 0.0,
+            g: 0.0,
+            b: 0.0
+        }
+    }
+}
+
 impl Add for Color01 {
     type Output = Self;
 
@@ -48,6 +58,14 @@ impl Add for Color01 {
             g: self.g + rhs.g,
             b: self.b + rhs.b,
         }
+    }
+}
+
+impl AddAssign for Color01 {
+    fn add_assign(&mut self, rhs: Self) {
+        self.r += rhs.r;
+        self.g += rhs.g;
+        self.b += rhs.b;
     }
 }
 
@@ -76,7 +94,7 @@ impl Mul<Color01> for f64 {
 }
 
 pub fn print_color(color: Color) {
-    println!("{} {} {}", color.r, color.g, color.b);
+    println!("{} {} {}", color.r.clamp(0, 255), color.g.clamp(0, 255), color.b.clamp(0, 255));
 }
 
 pub fn print_color_01(color: Color01) {
