@@ -14,6 +14,7 @@ pub struct Camera {
     pub focal_length: f64,
     pub frame_width: u32,
     pub samples_per_pixel: u16,
+    pub ray_bounces_max: u16,
     
     pixel_zero: Vec3,
     pixel_delta_u: Vec3,
@@ -58,7 +59,7 @@ impl Camera {
                 
                 for _ in 0..self.samples_per_pixel {
                     let ray: Ray = self.get_ray(i, j);
-                    color += Camera::ray_color(&ray, &world) * self.pixel_samples_scale;
+                    color += Camera::ray_color(&ray, self.ray_bounces_max, &world) * self.pixel_samples_scale;
                 }
                 
                 print_color_01(color);
@@ -81,10 +82,17 @@ impl Camera {
         Ray::new(ray_origin, ray_direction)
     }
     
-    fn ray_color(ray: &Ray, world: &HittableList) -> Color01 {
-        let hit_result = world.hit(ray, 0.0..rt_util::INFINITY);
+    fn ray_color(ray: &Ray, depth: u16, world: &HittableList) -> Color01 {
+        if depth <= 0 {
+            return Color01::default();
+        }
+        
+        let hit_result = world.hit(ray, 0.001..rt_util::INFINITY);
         if hit_result.is_hit {
-            return Color01 {r: (hit_result.data.normal.x + 1.0) * 0.5, g: (hit_result.data.normal.y + 1.0) * 0.5, b: (hit_result.data.normal.z + 1.0) * 0.5};
+            let bounce_dir = rt_util::random_on_unit_hemisphere(&hit_result.data.normal);
+            let bounce_ray = Ray::new(hit_result.data.point, bounce_dir);
+            
+            return Camera::ray_color(&bounce_ray, depth - 1, world) * 0.5;
         }
         
         let ray_dir_norm = ray.direction.normalized();
@@ -116,19 +124,21 @@ impl Default for Camera {
         let pixel_zero: Vec3 = view_pixel_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
         let samples_per_pixel: u16 = 10;
         let pixel_samples_scale: f64 = 1.0/samples_per_pixel as f64;
+        let ray_bounces_max: u16 = 10;
         
         Camera {
             position,
+            aspect_ratio,
+            focal_length,
+            frame_width,
+            samples_per_pixel,
+            ray_bounces_max,
             pixel_zero,
             pixel_delta_u,
             pixel_delta_v,
             pixel_samples_scale,
-            aspect_ratio,
-            focal_length,
-            frame_width,
             frame_height,
             frame_res,
-            samples_per_pixel
         }
     }
 }
