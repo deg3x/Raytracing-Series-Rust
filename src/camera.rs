@@ -89,7 +89,7 @@ impl Camera {
         
         let hit_result = world.hit(ray, 0.001..rt_util::INFINITY);
         if hit_result.is_hit {
-            let bounce_dir = rt_util::random_on_unit_hemisphere(&hit_result.data.normal);
+            let bounce_dir = hit_result.data.normal + rt_util::random_in_unit_sphere().normalized();
             let bounce_ray = Ray::new(hit_result.data.point, bounce_dir);
             
             return Camera::ray_color(&bounce_ray, depth - 1, world) * 0.5;
