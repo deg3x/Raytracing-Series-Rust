@@ -93,12 +93,30 @@ impl Mul<Color01> for f64 {
     }
 }
 
-pub fn print_color(color: Color) {
+impl Color01 {
+    pub fn linear_to_gamma(&self) -> Color01{
+        let mut ret = Color01::default();
+        
+        if self.r > 0.0 {
+            ret.r = self.r.sqrt();
+        }
+        if self.g > 0.0 {
+            ret.g = self.g.sqrt();
+        }
+        if self.b > 0.0 {
+            ret.b = self.b.sqrt();
+        }
+        
+        ret
+    }
+}
+
+fn print_color(color: Color) {
     println!("{} {} {}", color.r.clamp(0, 255), color.g.clamp(0, 255), color.b.clamp(0, 255));
 }
 
 pub fn print_color_01(color: Color01) {
-    let color_byte = Color::from(color);
+    let color_byte = Color::from(color.linear_to_gamma());
     
     print_color(color_byte);
 }
