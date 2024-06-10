@@ -93,7 +93,23 @@ impl Mul<Color01> for f64 {
     }
 }
 
+impl Mul<Color01> for Color01 {
+    type Output = Self;
+
+    fn mul(self, rhs: Color01) -> Self {
+        Self {
+            r: self.r * rhs.r,
+            g: self.g * rhs.g,
+            b: self.b * rhs.b
+        }
+    }
+}
+
 impl Color01 {
+    pub fn new(r: f64, g: f64, b: f64) -> Color01 {
+        Color01 {r, g, b}
+    }
+    
     pub fn linear_to_gamma(&self) -> Color01{
         let mut ret = Color01::default();
         

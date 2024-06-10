@@ -27,7 +27,13 @@ impl Vec3 {
     pub fn near_zero(&self) -> bool {
         let small_num: f64 = 1e-8;
         
-        self.x.abs() > small_num && self.y.abs() > small_num && self.z.abs() > small_num
+        self.x.abs() < small_num && self.y.abs() < small_num && self.z.abs() < small_num
+    }
+    
+    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+        let proj = *normal * dot(&self, normal);
+        
+        *self - (2.0 * proj)
     }
     
     pub fn normalized(&self) -> Vec3 {
@@ -91,6 +97,18 @@ impl Mul<f64> for Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+        }
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
         }
     }
 }
