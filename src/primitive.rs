@@ -1,5 +1,6 @@
 use std::ops::Range;
 
+use crate::material::Material;
 use crate::vector::*;
 use crate::ray::*;
 
@@ -7,7 +8,8 @@ pub struct RayHitData {
     pub point: Vec3,
     pub normal: Vec3,
     pub ray_t: f64,
-    pub front_face: bool
+    pub front_face: bool,
+    pub material: Material
 }
 
 impl RayHitData {
@@ -35,7 +37,8 @@ impl Default for RayHitResult {
                 point: Vec3 {x: 0.0, y: 0.0, z: 0.0},
                 normal: Vec3 {x: 0.0, y: 0.0, z: 0.0},
                 ray_t: -1.0,
-                front_face: false
+                front_face: false,
+                material: Material::default()
             }
         }
     }
@@ -48,7 +51,8 @@ pub trait Hittable {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Sphere {
     pub center: Vec3,
-    pub radius: f64
+    pub radius: f64,
+    pub material: Material
 }
 
 impl Hittable for Sphere {
@@ -81,6 +85,7 @@ impl Hittable for Sphere {
         result.is_hit = true;
         result.data.ray_t = t;
         result.data.point = ray.at(result.data.ray_t);
+        result.data.material = self.material;
         
         let normal = (result.data.point - self.center) * (1.0 / self.radius);
         result.data.set_face_normal(ray, &normal);

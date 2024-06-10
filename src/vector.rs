@@ -24,6 +24,12 @@ impl Vec3 {
         squared.sqrt()
     }
     
+    pub fn near_zero(&self) -> bool {
+        let small_num: f64 = 1e-8;
+        
+        self.x.abs() > small_num && self.y.abs() > small_num && self.z.abs() > small_num
+    }
+    
     pub fn normalized(&self) -> Vec3 {
         let inv_len = 1f64 / self.len();
         
