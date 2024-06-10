@@ -4,6 +4,7 @@ mod camera;
 mod color;
 mod ray;
 mod rt_util;
+mod material;
 
 use primitive::*;
 use camera::*;
