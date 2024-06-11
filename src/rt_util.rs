@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use rand::Rng;
+
 use crate::vector::{Vec3, dot};
 
 pub const PI: f64 = 3.1415926535897932385;
@@ -17,6 +19,12 @@ pub fn print_image_header(width: u32, height: u32) {
     println!("P3");
     println!("{} {}", width, height);
     println!("255");
+}
+
+pub fn random() -> f64 {
+    let mut rng = rand::thread_rng();
+    
+    rng.gen()
 }
 
 pub fn random_in_unit_sphere() -> Vec3 {

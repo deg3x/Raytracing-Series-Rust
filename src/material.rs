@@ -62,7 +62,7 @@ impl Material {
                 let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
                 
                 let out_dir: Vec3;
-                if sin_theta * refr_factor > 1.0 {
+                if sin_theta * refr_factor > 1.0 || schlick_reflectance(cos_theta, refr_factor) > rt_util::random() {
                     out_dir = ray_dir_norm.reflect(&hit.data.normal);
                 }
                 else {
@@ -75,4 +75,11 @@ impl Material {
             },
         }
     }
+}
+
+fn schlick_reflectance(cosine: f64, refr_idx: f64) -> f64 {
+    let mut r0 = (1.0 - refr_idx) / (1.0 + refr_idx);
+    r0 = r0 * r0;
+    
+    r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
 }
