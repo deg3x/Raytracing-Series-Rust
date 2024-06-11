@@ -1,3 +1,5 @@
+use std::ops::Neg;
+
 use crate::primitive::RayHitResult;
 use crate::color::Color01;
 use crate::rt_util;
@@ -55,10 +57,21 @@ impl Material {
                     self.refraction_idx
                 };
                 
-                let refr_dir = ray.direction.normalized().refract(&hit.data.normal, refr_factor);
-                let refr_ray = Ray::new(hit.data.point, refr_dir);
+                let ray_dir_norm = &ray.direction.normalized();
+                let cos_theta = f64::min(dot(&ray_dir_norm.neg(), &hit.data.normal), 1.0);
+                let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
                 
-                (refr_ray, Color01::new(1.0, 1.0, 1.0), true)
+                let out_dir: Vec3;
+                if sin_theta * refr_factor > 1.0 {
+                    out_dir = ray_dir_norm.reflect(&hit.data.normal);
+                }
+                else {
+                    out_dir = ray_dir_norm.refract(&hit.data.normal, refr_factor);
+                }
+                
+                let out_ray = Ray::new(hit.data.point, out_dir);
+                
+                (out_ray, Color01::new(1.0, 1.0, 1.0), true)
             },
         }
     }
