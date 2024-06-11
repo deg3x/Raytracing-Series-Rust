@@ -15,8 +15,12 @@ use vector::*;
 fn main() {
     let mut camera: Camera = Camera::default();
     
-    camera.position = Vec3::new(0.0, 0.0, 0.0);
-    camera.focal_length = 1.0;
+    camera.position = Vec3::new(-2.0, 2.0, 1.0);
+    camera.look_at = Vec3::new(0.0, 0.0, -1.0);
+    camera.up_vector = Vec3::new(0.0, 1.0, 0.0);
+    camera.fov_vertical = 20.0;
+    camera.defocus_angle = 10.0;
+    camera.focus_distance = 3.4;
     camera.frame_width = 1080;
     camera.aspect_ratio = 16.0 / 9.0;
     camera.samples_per_pixel = 10;

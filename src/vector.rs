@@ -133,6 +133,18 @@ impl Mul<Vec3> for f64 {
     }
 }
 
+impl Mul<Vec3> for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: Vec3) -> Self {
+        Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
 pub fn dot(a: &Vec3, b: &Vec3) -> f64 {
     a.x * b.x + a.y * b.y + a.z * b.z
 }
@@ -140,7 +152,7 @@ pub fn dot(a: &Vec3, b: &Vec3) -> f64 {
 pub fn cross(a: &Vec3, b: &Vec3) -> Vec3 {
     Vec3 { 
         x: a.y * b.z - b.y * a.z,
-        y: a.x * b.z - b.x * a.z,
+        y: a.z * b.x - b.z * a.x,
         z: a.x * b.y - b.x * a.y
     }
 }

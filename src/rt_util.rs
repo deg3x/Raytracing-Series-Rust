@@ -27,6 +27,17 @@ pub fn random() -> f64 {
     rng.gen()
 }
 
+pub fn random_in_unit_disk() -> Vec3 {
+    loop {
+        let mut point = Vec3::random_range(-1.0..1.0);
+        point.z = 0.0;
+        
+        if point.len_sqr() < 1.0 {
+            return point;
+        }
+    }
+}
+
 pub fn random_in_unit_sphere() -> Vec3 {
     loop {
         let point = Vec3::random_range(-1.0..1.0);
