@@ -1,4 +1,4 @@
-use std::ops::{ Add, Mul, Range, Sub };
+use std::ops::{ Add, Mul, Range, Sub, Neg };
 
 use rand::{random, Rng};
 
@@ -34,6 +34,14 @@ impl Vec3 {
         let proj = *normal * dot(&self, normal);
         
         *self - (2.0 * proj)
+    }
+    
+    pub fn refract(&self, normal: &Vec3, refr_factor: f64) -> Vec3 {
+        let cos_theta = dot(&self.normalized().neg(), normal);
+        let refr_perp = refr_factor * (*self + *normal * cos_theta);
+        let refr_parl = (1.0 - refr_perp.len_sqr()).abs().sqrt() * *normal;
+        
+        refr_perp + refr_parl
     }
     
     pub fn normalized(&self) -> Vec3 {
@@ -85,6 +93,18 @@ impl Sub for Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z   
+        }
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
         }
     }
 }
