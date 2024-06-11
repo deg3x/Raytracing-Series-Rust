@@ -37,9 +37,9 @@ impl Vec3 {
     }
     
     pub fn refract(&self, normal: &Vec3, refr_factor: f64) -> Vec3 {
-        let cos_theta = dot(&self.normalized().neg(), normal);
+        let cos_theta = f64::min(dot(&self.neg(), normal), 1.0);
         let refr_perp = refr_factor * (*self + *normal * cos_theta);
-        let refr_parl = (1.0 - refr_perp.len_sqr()).abs().sqrt() * *normal;
+        let refr_parl = -(1.0 - refr_perp.len_sqr()).abs().sqrt() * *normal;
         
         refr_perp + refr_parl
     }
